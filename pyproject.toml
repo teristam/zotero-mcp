@@ -1,0 +1,9 @@
+[project]
+name = "zotero-mcp"
+version = "0.1.0"
+description = "Model Context Protocol server for Zotero"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "mcp[cli]>=1.2.0",
+]
