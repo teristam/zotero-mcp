@@ -1,7 +1,8 @@
 # server.py
 import os
+from typing import Any, Literal
+
 from dotenv import load_dotenv
-from typing import Any
 from mcp.server.fastmcp import FastMCP
 from pyzotero import zotero
 
@@ -153,7 +154,7 @@ def get_item_fulltext(item_key: str) -> str:
     """Get the full text content of a specific Zotero item
 
     Args:
-        item_key: The unique Zotero item key
+        item_key: The unique Zotero item key, of either the parent item or an attachment
     """
     zot = get_zotero_client()
 
@@ -162,7 +163,7 @@ def get_item_fulltext(item_key: str) -> str:
         if not item:
             return f"No item found with key: {item_key}"
 
-            # Fetch full-text content
+        # Fetch full-text content
         attachment_key, content_type = get_attachment_details(zot, item)
 
         if attachment_key:
@@ -174,29 +175,43 @@ def get_item_fulltext(item_key: str) -> str:
         else:
             item_text = "[No suitable attachment found for full text extraction]"
 
-        return f"{format_item(item)}\nAttachment ID: {attachment_key or ''}\n\nFull Text:\n{item_text}"
+        return f"{format_item(item)}\n\nAttachment Item Key: {attachment_key or ''}\n\nFull Text:\n{item_text}"
     except Exception as e:
         return f"Error retrieving item: {str(e)}"
 
 
 @mcp.tool()
-def search_items(query: str, limit: int | None = 10) -> str:
-    """Search for items in your Zotero library
+def search_items(
+    query: str,
+    qmode: Literal["titleCreatorYear", "everything"] | None = "titleCreatorYear",
+    tag: str | None = None,
+    limit: int | None = 10,
+) -> str:
+    r"""Search for items in your Zotero library
 
     Args:
         query: Search query string
+        qmode: Quick search mode. To include full-text content, use everything. (default: titleCreatorYear)
+        tag: Tag search, supports Boolean searches, such as:
+            tag=foo
+            tag=foo bar (tag with space)
+            tag=foo&tag=bar (AND)
+            tag=foo bar || bar (OR)
+            tag=-foo (NOT)
+            tag=\-foo (literal first-character hyphen)
         limit: Maximum number of results to return (default: 10)
 
     Returns a formatted string containing search results, with each item including:
         - Title and type
-        - Authors
+        - Item Key (can be used with get_item_metadata or get_item_fulltext to get more information)
         - Date
-        - Resource ID (can be used with zotero://items/{key}/... to get full details)
+        - Authors (concatenated list)
+        - Abstract (if available)
     """
     zot = get_zotero_client()
 
     # Search using the q parameter
-    zot.add_parameters(q=query, limit=limit)
+    zot.add_parameters(q=query, qmode=qmode, limit=limit)
     # n.b. types for this return do not work, it's a parsed JSON object
     results: Any = zot.items()
 
@@ -211,6 +226,8 @@ def search_items(query: str, limit: int | None = 10) -> str:
         title = data.get("title", "Untitled")
         item_type = data.get("itemType", "unknown")
         date = data.get("date", "")
+        item_key = item.get("key", "")
+        abstract = data.get("abstractNote", "")
 
         # Format creators
         creators = []
@@ -221,16 +238,13 @@ def search_items(query: str, limit: int | None = 10) -> str:
                 creators.append(creator["name"])
         creator_str = "; ".join(creators) if creators else "No authors"
 
-        # Get item key for resource reference
-        item_key = item.get("key", "")
-        resource_uri = f"zotero://items/{item_key}"
-
         # Build formatted entry
         entry = [
             f"- {title} ({item_type})",
-            f"  Authors: {creator_str}",
+            f"  Item Key: {item_key}",
             f"  Date: {date}",
-            f"  Resource ID: {resource_uri}\n",
+            f"  Authors: {creator_str}",
+            f"  Abstract: {abstract}\n",
         ]
         formatted_results.append("\n".join(entry))
 

@@ -47,3 +47,4 @@ uv run mcp install -e . server.py
 - https://modelcontextprotocol.io/tutorials/building-mcp-with-llms
 - https://github.com/modelcontextprotocol/python-sdk
 - https://pyzotero.readthedocs.io/en/latest/
+- https://www.zotero.org/support/dev/web_api/v3/start
