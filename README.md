@@ -26,10 +26,14 @@ This MCP server provides the following tools:
 
 The server exposes these resource templates:
 
-- `zotero://items/{item_key}`
+- `zotero://items/{item_key}/metadata`
   - Description: Get detailed information about a specific Zotero item
   - Parameter: `item_key` - The unique Zotero item identifier
-  - Example: `zotero://items/ABC123XYZ`
+  - Example: `zotero://items/ABC123XYZ/metadata`
+- `zotero://items/{item_key}/fulltext`
+  - Description: Get the full text of a specific Zotero item
+  - Parameter: `item_key` - The unique Zotero item identifier
+  - Example: `zotero://items/ABC123XYZ/fulltext`
 
 These resources can be discovered and accessed through the MCP Inspector or any other MCP client.
 
@@ -37,7 +41,7 @@ Each resource returns formatted text containing metadata about the Zotero items.
 
 ## Usage
 
-Start the server for local development:
+Start the server for local development with the MCP Inspector:
 
 ```bash
 uv run mcp dev server.py
