@@ -19,8 +19,21 @@ You can find your library ID and create an API key in your Zotero account settin
 ## Features
 
 This MCP server provides the following tools:
+### Tools
 
 - `search_items`: Search for items in your Zotero library using a text query
+### Resources
+
+The server exposes these resource templates:
+
+- `zotero://items/{item_key}`
+  - Description: Get detailed information about a specific Zotero item
+  - Parameter: `item_key` - The unique Zotero item identifier
+  - Example: `zotero://items/ABC123XYZ`
+
+These resources can be discovered and accessed through the MCP Inspector or any other MCP client.
+
+Each resource returns formatted text containing metadata about the Zotero items.
 
 ## Usage
 
