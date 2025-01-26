@@ -6,5 +6,6 @@ readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
     "mcp[cli]>=1.2.0",
+    "python-dotenv>=1.0.1",
     "pyzotero>=1.6.8",
 ]

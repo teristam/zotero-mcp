@@ -383,11 +383,13 @@ version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
     { name = "mcp", extra = ["cli"] },
+    { name = "python-dotenv" },
     { name = "pyzotero" },
 ]
 
 [package.metadata]
 requires-dist = [
     { name = "mcp", extras = ["cli"], specifier = ">=1.2.0" },
+    { name = "python-dotenv", specifier = ">=1.0.1" },
     { name = "pyzotero", specifier = ">=1.6.8" },
 ]
