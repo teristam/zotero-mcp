@@ -37,13 +37,19 @@ Each resource returns formatted text containing metadata about the Zotero items.
 
 ## Usage
 
-Start the server:
+Start the server for local development:
 
 ```bash
 uv run mcp dev server.py
 ```
 
 You can then use these tools through any MCP client, such as Claude Desktop or the MCP Inspector.
+
+To install in Claude Desktop:
+
+```bash
+uv run mcp install -e . server.py
+```
 
 - https://modelcontextprotocol.io/tutorials/building-mcp-with-llms
 - https://github.com/modelcontextprotocol/python-sdk
