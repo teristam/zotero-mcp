@@ -129,7 +129,7 @@ def format_item(item: dict[str, Any]) -> str:
 
 
 # Register the actual resource handlers
-@mcp.resource("zotero://items/{item_key}/metadata")
+@mcp.tool()
 def get_item_metadata(item_key: str) -> str:
     """Get metadata information about a specific Zotero item
 
@@ -148,7 +148,7 @@ def get_item_metadata(item_key: str) -> str:
 
 
 # Register the actual resource handlers
-@mcp.resource("zotero://items/{item_key}/fulltext")
+@mcp.tool()
 def get_item_fulltext(item_key: str) -> str:
     """Get the full text content of a specific Zotero item
 
