@@ -43,6 +43,14 @@ To install in Claude Desktop:
 uv run mcp install -e . server.py
 ```
 
+### Running Tests
+
+To run the test suite:
+
+```bash
+uv run pytest
+```
+
 ## Relevant Documentation
 
 - https://modelcontextprotocol.io/tutorials/building-mcp-with-llms

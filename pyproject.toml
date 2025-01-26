@@ -14,3 +14,8 @@ dependencies = [
 # TODO: Switch back to official releases after this fix is available:
 # https://github.com/modelcontextprotocol/python-sdk/issues/129
 mcp = { git = "https://github.com/modelcontextprotocol/python-sdk" }
+
+[dependency-groups]
+dev = [
+    "pytest>=8.3.4",
+]
