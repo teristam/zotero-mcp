@@ -9,3 +9,8 @@ dependencies = [
     "python-dotenv>=1.0.1",
     "pyzotero>=1.6.8",
 ]
+
+[tool.uv.sources]
+# TODO: Switch back to official releases after this fix is available:
+# https://github.com/modelcontextprotocol/python-sdk/issues/129
+mcp = { git = "https://github.com/modelcontextprotocol/python-sdk" }
