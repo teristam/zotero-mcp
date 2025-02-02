@@ -1,9 +1,11 @@
 # server.py
 import os
+import textwrap
 from typing import Any, Literal
 
 from dotenv import load_dotenv
 from mcp.server.fastmcp import FastMCP
+from pydantic import BaseModel
 from pyzotero import zotero
 
 # Load environment variables
@@ -28,26 +30,26 @@ def get_zotero_client():
     return zotero.Zotero(library_id, library_type, api_key)
 
 
+class AttachmentDetails(BaseModel):
+    key: str
+    content_type: str
+
+
 def get_attachment_details(
-    zot: Any, item: dict[str, Any]
-) -> tuple[str | None, str | None]:
-    """Get attachment ID and content type for a Zotero item
-
-    Args:
-        zot: Zotero client instance
-        item: Zotero item dictionary
-
-    Returns:
-        Tuple of (attachment_key, content_type)
-        Returns (None, None) if no suitable attachment is found
-    """
+    zot: Any,
+    item: dict[str, Any],
+) -> AttachmentDetails | None:
+    """Get attachment ID and content type for a Zotero item"""
     data = item.get("data", {})
     item_type = data.get("itemType")
 
     # Direct attachment - check if it's a PDF or other supported type
     if item_type == "attachment":
         content_type = data.get("contentType")
-        return data.get("key"), content_type
+        return AttachmentDetails(
+            key=data.get("key"),
+            content_type=content_type,
+        )
 
     # For regular items, look for child attachments
     try:
@@ -73,17 +75,26 @@ def get_attachment_details(
         # Return first match in priority order
         if pdfs:
             pdfs.sort(key=lambda x: x[2], reverse=True)
-            return pdfs[0][0], pdfs[0][1]
+            return AttachmentDetails(
+                key=pdfs[0][0],
+                content_type=pdfs[0][1],
+            )
         if htmls:
             htmls.sort(key=lambda x: x[2], reverse=True)
-            return htmls[0][0], htmls[0][1]
+            return AttachmentDetails(
+                key=htmls[0][0],
+                content_type=htmls[0][1],
+            )
         if others:
             others.sort(key=lambda x: x[2], reverse=True)
-            return others[0][0], others[0][1]
+            return AttachmentDetails(
+                key=others[0][0],
+                content_type=others[0][1],
+            )
     except Exception:
         pass
 
-    return None, None
+    return None
 
 
 def format_item(item: dict[str, Any]) -> str:
@@ -164,10 +175,10 @@ def get_item_fulltext(item_key: str) -> str:
             return f"No item found with key: {item_key}"
 
         # Fetch full-text content
-        attachment_key, content_type = get_attachment_details(zot, item)
+        attachment = get_attachment_details(zot, item)
 
-        if attachment_key:
-            full_text_data: Any = zot.fulltext_item(attachment_key)
+        if attachment is not None:
+            full_text_data: Any = zot.fulltext_item(attachment.key)
             if full_text_data and "content" in full_text_data:
                 item_text = full_text_data["content"]
             else:
@@ -175,7 +186,14 @@ def get_item_fulltext(item_key: str) -> str:
         else:
             item_text = "[No suitable attachment found for full text extraction]"
 
-        return f"{format_item(item)}\n\nAttachment Item Key: {attachment_key or ''}\n\nFull Text:\n{item_text}"
+        return textwrap.dedent(
+            f"""
+            {format_item(item)}
+
+            Attachment Item Key: {attachment.key if attachment else ''}
+
+            Full Text:\n{item_text}""".strip()
+        )
     except Exception as e:
         return f"Error retrieving item: {str(e)}"
 
