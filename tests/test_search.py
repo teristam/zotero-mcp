@@ -1,7 +1,8 @@
 """Tests for search functionality"""
+
 from typing import Any
 
-from server import search_items
+from zotero_mcp import search_items
 
 
 def test_search_items_basic(mock_zotero: Any, sample_item: dict[str, Any]) -> None:
@@ -30,7 +31,9 @@ def test_search_items_no_results(mock_zotero: Any) -> None:
     assert "No items found" in result
 
 
-def test_search_items_custom_params(mock_zotero: Any, sample_item: dict[str, Any]) -> None:
+def test_search_items_custom_params(
+    mock_zotero: Any, sample_item: dict[str, Any]
+) -> None:
     """Test search with custom parameters"""
     mock_zotero.items.return_value = [sample_item]
 

@@ -15,7 +15,7 @@ def mock_zotero(monkeypatch) -> MagicMock:
     def mock_get_zotero_client():
         return mock
 
-    monkeypatch.setattr("server.get_zotero_client", mock_get_zotero_client)
+    monkeypatch.setattr("zotero_mcp.get_zotero_client", mock_get_zotero_client)
     return mock
 
 

@@ -21,9 +21,9 @@ The [local Zotero API](https://groups.google.com/g/zotero-dev/c/ElvHhIFAXrY/m/fA
 
 This MCP server provides the following tools:
 
-- `search_items`: Search for items in your Zotero library using a text query
-- `get_item_metadata`: Get detailed information about a specific Zotero item
-- `get_item_fulltext`: Get the full text of a specific Zotero item
+- `zotero_search_items`: Search for items in your Zotero library using a text query
+- `zotero_item_metadata`: Get detailed information about a specific Zotero item
+- `zotero_item_fulltext`: Get the full text of a specific Zotero item
 
 These can be discovered and accessed through the [MCP Inspector](https://modelcontextprotocol.io/docs/tools/inspector) or any other [MCP client](https://modelcontextprotocol.io/clients).
 
@@ -31,18 +31,29 @@ Each tool returns formatted text containing relevant information from your Zoter
 
 ## Usage
 
-Start the server for local development with the MCP Inspector:
+To use this with Claude Desktop, add the following to the `mcpServers` configuration:
 
-```bash
-uv run mcp dev server.py
+```json
+    "zotero": {
+      "command": "uv",
+      "args": [
+        "--directory",
+        "/path/to/zotero-mcp",
+        "run",
+        "zotero-mcp"
+      ],
+      "environment": {}
+    }
 ```
 
-You can then use these tools through any MCP client, such as Claude Desktop or the MCP Inspector.
+You can provide environment variables above, or in a .env file within the local clone of this repository.
 
-To install in Claude Desktop:
+## Development
+
+Start the [MCP Inspector](https://modelcontextprotocol.io/docs/tools/inspector) for local development:
 
 ```bash
-uv run mcp install -e . server.py
+npx @modelcontextprotocol/inspector uv run zotero-mcp
 ```
 
 ### Running Tests

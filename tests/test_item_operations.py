@@ -2,7 +2,7 @@
 
 from typing import Any
 
-from server import get_item_metadata, get_item_fulltext
+from zotero_mcp import get_item_metadata, get_item_fulltext
 
 
 def test_get_item_metadata(mock_zotero: Any, sample_item: dict[str, Any]) -> None:
