@@ -21,13 +21,22 @@ def get_zotero_client():
     library_id = os.getenv("ZOTERO_LIBRARY_ID")
     library_type = os.getenv("ZOTERO_LIBRARY_TYPE", "user")
     api_key = os.getenv("ZOTERO_API_KEY")
+    local = os.getenv("ZOTERO_LOCAL", "").lower() in ["true", "yes", "1"]
+    if local and not library_id:
+        # Indicates "current user" for the local API
+        library_id = "0"
 
-    if not all([library_id, api_key]):
+    if not local or all([library_id, api_key]):
         raise ValueError(
             "Missing required environment variables. Please set ZOTERO_LIBRARY_ID and ZOTERO_API_KEY"
         )
 
-    return zotero.Zotero(library_id, library_type, api_key)
+    return zotero.Zotero(
+        library_id=library_id,
+        library_type=library_type,
+        api_key=api_key,
+        local=local,
+    )
 
 
 class AttachmentDetails(BaseModel):
@@ -140,7 +149,6 @@ def format_item(item: dict[str, Any]) -> str:
     return "\n".join(formatted)
 
 
-# Register the actual resource handlers
 @mcp.tool(
     name="zotero_item_metadata",
     description="Get metadata information about a specific Zotero item, given the item key.",
@@ -197,6 +205,7 @@ def get_item_fulltext(item_key: str) -> str:
 
 @mcp.tool(
     name="zotero_search_items",
+    # More detail can be added if useful: https://www.zotero.org/support/dev/web_api/v3/basics#searching
     description="Search for items in your Zotero library, given a query string, query mode (titleCreatorYear or everything), and optional tag search (supports boolean searches). Returned results can be looked up with zotero_get_fulltext or zotero_get_metadata.",
 )
 def search_items(

@@ -15,6 +15,8 @@ ZOTERO_API_KEY=your_api_key
 
 You can find your library ID and create an API key in your Zotero account settings: https://www.zotero.org/settings/keys
 
+The [local Zotero API](https://groups.google.com/g/zotero-dev/c/ElvHhIFAXrY/m/fA7SKKwsAgAJ) can be used by setting `ZOTERO_LOCAL=true` in the `.env` file.
+
 ## Features
 
 This MCP server provides the following tools:
