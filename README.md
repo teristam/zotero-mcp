@@ -2,21 +2,6 @@
 
 This project is a python-based server that implements the [Model Context Protocol (MCP)](https://modelcontextprotocol.io/introduction) for [Zotero](https://www.zotero.org/).
 
-## Setup
-
-1. Install dependencies with [uv](https://docs.astral.sh/uv/) by running: `uv sync`
-1. Create a `.env` file in the project root with your Zotero credentials:
-
-```
-ZOTERO_LIBRARY_ID=your_library_id
-ZOTERO_LIBRARY_TYPE=user  # or "group", optional, defaults to "user"
-ZOTERO_API_KEY=your_api_key
-```
-
-You can find your library ID and create an API key in your Zotero account settings: https://www.zotero.org/settings/keys
-
-The [local Zotero API](https://groups.google.com/g/zotero-dev/c/ElvHhIFAXrY/m/fA7SKKwsAgAJ) can be used by setting `ZOTERO_LOCAL=true` in the `.env` file.
-
 ## Features
 
 This MCP server provides the following tools:
@@ -29,26 +14,38 @@ These can be discovered and accessed through the [MCP Inspector](https://modelco
 
 Each tool returns formatted text containing relevant information from your Zotero items.
 
-## Usage
+## Installation
 
 To use this with Claude Desktop, add the following to the `mcpServers` configuration:
 
 ```json
     "zotero": {
-      "command": "uv",
-      "args": [
-        "--directory",
-        "/path/to/zotero-mcp",
-        "run",
-        "zotero-mcp"
-      ],
-      "environment": {}
+      "command": "uvx",
+      "args": ["zotero-mcp"],
+      "env": {
+        "ZOTERO_LOCAL": "true"
+      }
     }
 ```
 
-You can provide environment variables above, or in a .env file within the local clone of this repository.
+The following environment variables are supported:
+
+- `ZOTERO_LOCAL=true`: Use the local Zotero API (default: false)
+- `ZOTERO_LIBRARY_ID`: Your Zotero library ID (not required for the local API)
+- `ZOTERO_LIBRARY_TYPE`: The type of library (user or group, default: user)
+- `ZOTERO_API_KEY`: Your Zotero API key (not required for the local API)
+
+You can find your library ID and create an API key in your Zotero account settings: https://www.zotero.org/settings/keys
+
+The [local Zotero API](https://groups.google.com/g/zotero-dev/c/ElvHhIFAXrY/m/fA7SKKwsAgAJ) can be used with Zotero 7 running on the same machine.
+
+> n.b. An upcoming Zotero release is needed to support the fulltext API locally: https://github.com/zotero/zotero/pull/5004
 
 ## Development
+
+1. Clone this repository
+1. Install dependencies with [uv](https://docs.astral.sh/uv/) by running: `uv sync`
+1. Create a `.env` file in the project root with the environment variables above
 
 Start the [MCP Inspector](https://modelcontextprotocol.io/docs/tools/inspector) for local development:
 
