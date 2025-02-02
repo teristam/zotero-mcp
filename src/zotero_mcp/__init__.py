@@ -98,7 +98,7 @@ def get_item_fulltext(item_key: str) -> str:
             f"""
             {format_item(item)}
 
-            Attachment Item Key: {attachment.key if attachment else ''}
+            Attachment Item Key: {attachment.key if attachment else ""}
 
             Full Text:\n{item_text}""".strip()
         )
