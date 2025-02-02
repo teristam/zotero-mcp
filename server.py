@@ -141,13 +141,12 @@ def format_item(item: dict[str, Any]) -> str:
 
 
 # Register the actual resource handlers
-@mcp.tool()
+@mcp.tool(
+    name="zotero_item_metadata",
+    description="Get metadata information about a specific Zotero item, given the item key.",
+)
 def get_item_metadata(item_key: str) -> str:
-    """Get metadata information about a specific Zotero item
-
-    Args:
-        item_key: The unique Zotero item key
-    """
+    """Get metadata information about a specific Zotero item"""
     zot = get_zotero_client()
 
     try:
@@ -156,17 +155,15 @@ def get_item_metadata(item_key: str) -> str:
             return f"No item found with key: {item_key}"
         return format_item(item)
     except Exception as e:
-        return f"Error retrieving item: {str(e)}"
+        return f"Error retrieving item metadata: {str(e)}"
 
 
-# Register the actual resource handlers
-@mcp.tool()
+@mcp.tool(
+    name="zotero_item_fulltext",
+    description="Get the full text content of a Zotero item, given the item key of a parent item or specific attachment.",
+)
 def get_item_fulltext(item_key: str) -> str:
-    """Get the full text content of a specific Zotero item
-
-    Args:
-        item_key: The unique Zotero item key, of either the parent item or an attachment
-    """
+    """Get the full text content of a specific Zotero item"""
     zot = get_zotero_client()
 
     try:
@@ -195,37 +192,20 @@ def get_item_fulltext(item_key: str) -> str:
             Full Text:\n{item_text}""".strip()
         )
     except Exception as e:
-        return f"Error retrieving item: {str(e)}"
+        return f"Error retrieving item full text: {str(e)}"
 
 
-@mcp.tool()
+@mcp.tool(
+    name="zotero_search_items",
+    description="Search for items in your Zotero library, given a query string, query mode (titleCreatorYear or everything), and optional tag search (supports boolean searches). Returned results can be looked up with zotero_get_fulltext or zotero_get_metadata.",
+)
 def search_items(
     query: str,
     qmode: Literal["titleCreatorYear", "everything"] | None = "titleCreatorYear",
     tag: str | None = None,
     limit: int | None = 10,
 ) -> str:
-    r"""Search for items in your Zotero library
-
-    Args:
-        query: Search query string
-        qmode: Quick search mode. To include full-text content, use everything. (default: titleCreatorYear)
-        tag: Tag search, supports Boolean searches, such as:
-            tag=foo
-            tag=foo bar (tag with space)
-            tag=foo&tag=bar (AND)
-            tag=foo bar || bar (OR)
-            tag=-foo (NOT)
-            tag=\-foo (literal first-character hyphen)
-        limit: Maximum number of results to return (default: 10)
-
-    Returns a formatted string containing search results, with each item including:
-        - Title and type
-        - Item Key (can be used with get_item_metadata or get_item_fulltext to get more information)
-        - Date
-        - Authors (concatenated list)
-        - Abstract (if available)
-    """
+    """Search for items in your Zotero library"""
     zot = get_zotero_client()
 
     # Search using the q parameter
