@@ -123,9 +123,9 @@ def get_item_fulltext(item_key: str) -> str:
 )
 def search_items(
     query: str,
-    qmode: Literal["titleCreatorYear", "everything"] | None = "titleCreatorYear",
-    tag: str | None = None,
-    limit: int | None = 10,
+    qmode: Literal["titleCreatorYear", "everything"] = "titleCreatorYear",
+    tag: str = None,
+    limit: int = 10,
 ) -> str:
     """Search for items in your Zotero library"""
     zot = get_zotero_client()
