@@ -1,9 +1,10 @@
 import textwrap
 from typing import Any, Literal
-
+from markitdown import MarkItDown
 from mcp.server.fastmcp import FastMCP
 
 from zotero_mcp.client import get_attachment_details, get_zotero_client
+import tempfile
 
 # Create an MCP server
 mcp = FastMCP("Zotero")
@@ -84,13 +85,22 @@ def get_item_fulltext(item_key: str) -> str:
 
         # Fetch full-text content
         attachment = get_attachment_details(zot, item)
-
+        print(attachment)
         if attachment is not None:
-            full_text_data: Any = zot.fulltext_item(attachment.key)
-            if full_text_data and "content" in full_text_data:
-                item_text = full_text_data["content"]
-            else:
-                item_text = "[Attachment available but text extraction not possible]"
+            try:
+                full_text_data: Any = zot.fulltext_item(attachment.key)
+                if full_text_data and "content" in full_text_data:
+                    item_text = full_text_data["content"]
+                else:
+                    item_text = "[Attachment available but text extraction not possible]"
+            except Exception as e:
+                #try alternative way to get the full text
+                # print('Converting to Markdown')
+                file = zot.file(attachment.key)
+                tmp_pdf = tempfile.NamedTemporaryFile(suffix='.pdf')
+                tmp_pdf.write(file)
+                md = MarkItDown()
+                item_text = md.convert(tmp_pdf.name).text_content
         else:
             item_text = "[No suitable attachment found for full text extraction]"
 
