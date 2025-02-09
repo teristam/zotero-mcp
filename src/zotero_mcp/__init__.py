@@ -8,6 +8,7 @@ import tempfile
 
 # Create an MCP server
 mcp = FastMCP("Zotero")
+md = MarkItDown()
 
 
 def format_item(item: dict[str, Any]) -> str:
@@ -78,6 +79,7 @@ def get_item_fulltext(item_key: str) -> str:
     """Get the full text content of a specific Zotero item"""
     zot = get_zotero_client()
 
+
     try:
         item: Any = zot.item(item_key)
         if not item:
@@ -85,7 +87,6 @@ def get_item_fulltext(item_key: str) -> str:
 
         # Fetch full-text content
         attachment = get_attachment_details(zot, item)
-        print(attachment)
         if attachment is not None:
             try:
                 full_text_data: Any = zot.fulltext_item(attachment.key)
@@ -99,8 +100,8 @@ def get_item_fulltext(item_key: str) -> str:
                 file = zot.file(attachment.key)
                 tmp_pdf = tempfile.NamedTemporaryFile(suffix='.pdf')
                 tmp_pdf.write(file)
-                md = MarkItDown()
                 item_text = md.convert(tmp_pdf.name).text_content
+                # return item_text
         else:
             item_text = "[No suitable attachment found for full text extraction]"
 
